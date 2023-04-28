@@ -1,7 +1,11 @@
 package com.tus.discount.controllers;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +42,12 @@ public class DiscountRestController {
      * @return ResponseEntity with a status code of 201 CREATED and the created discount in the response body.
      */
 	@RequestMapping(value = "/discounts", method = RequestMethod.POST)
-	public ResponseEntity<Discount> create(@RequestBody Discount discount) {
+	public ResponseEntity<Discount> create(@NotNull @RequestBody Discount discount) {
+		// Returning a bad request status if the parameters are less than zero
+		if (discount.getDiscount().compareTo(BigDecimal.ZERO) < 0) {
+	        // Returning a bad request status if the input values are less than 0
+	        return ResponseEntity.badRequest().build();
+	    }
 		// Creating Discount object 
 		Discount createdDiscount = repo.save(discount);
 		// Using ServletUriComponentsBuilder to build the Location header URL
@@ -56,7 +65,7 @@ public class DiscountRestController {
      * @return A ResponseEntity containing the retrieved discount or a not found status if the discount was not found.
      */
 	@RequestMapping(value = "/discounts/{code}", method = RequestMethod.GET)
-	public ResponseEntity<Discount> getDiscount(@PathVariable("code") String code) {
+	public ResponseEntity<Discount> getDiscount(@Valid @PathVariable("code") String code) {
 		// Finding Discount objects with provided code and saving it into soughtDiscounts object
 		Discount soughtDiscounts = repo.findByCode(code);
 		// Returning a not found status if no matches found
