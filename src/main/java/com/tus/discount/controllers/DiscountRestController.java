@@ -55,8 +55,11 @@ public class DiscountRestController {
 	@RequestMapping(value = "/discounts", method = RequestMethod.POST)
 	public ResponseEntity<Discount> create(@NotNull @RequestBody Discount discount) {
 		log.info("DiscountserviceApplication POST method called");
+		if(discount.getDiscount() == null) {
+			discount.setDiscount(BigDecimal.ZERO);
+		}
 		// Returning a bad request status if the parameters are less than zero
-		if (discount.getDiscount().compareTo(BigDecimal.ZERO) < 0) {
+		if (discount.getDiscount().compareTo(BigDecimal.ZERO) < 0 || discount.getCode() == null || discount.getExpDate() == null) {
 	        // Returning a bad request status if the input values are less than 0
 	        return ResponseEntity.badRequest().build();
 	    }
@@ -105,10 +108,5 @@ public class DiscountRestController {
 		}
 		// Returning a response entity with the retrieved discounts and an OK status
 		return ResponseEntity.status(HttpStatus.OK).body(allDiscounts); 
-	}
-	
-	@GetMapping("/testparams")
-	public TestParams getTestParamsFromConfigServer() {
-		return new TestParams(param1, param2);
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableConfigServer
 public class DiscountserviceApplication {
 
 	public static void main(String[] args) {
